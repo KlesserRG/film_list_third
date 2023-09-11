@@ -15,6 +15,7 @@ void main() async{
   await Hive.openBox<UserThemeDataType>(FilmItemTypeKeys.userThemeDataTypeKey);
 
   HiveBoxes.filmItemType.clear();
+  HiveBoxes.userThemeDataType.clear();
 
   // runApp(const MaterialApp());
 

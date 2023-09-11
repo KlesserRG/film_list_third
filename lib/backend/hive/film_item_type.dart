@@ -31,6 +31,15 @@ class FilmItemType {
   @HiveField(8)
   final int? seriesEpisodes;
 
+  @HiveField(9)
+  final bool? isWatchingSeries;
+
+  @HiveField(10)
+  final int? watchingSeason;
+
+  @HiveField(11)
+  final int? watchingEpisode;
+
   const FilmItemType({
     this.isWatched = true,
     this.title = "No title",
@@ -41,6 +50,9 @@ class FilmItemType {
     this.isSeries = false,
     this.seriesEpisodes,
     this.seriesSeasons,
+    this.isWatchingSeries,
+    this.watchingEpisode,
+    this.watchingSeason,
   });
 }
 

@@ -30,6 +30,9 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
   TextEditingController comment = TextEditingController();
   TextEditingController? seriesSeasons = TextEditingController();
   TextEditingController? seriesEpisodes = TextEditingController();
+  bool isWatchingSeries = false;
+  double watchingEpisode = 1;
+  double watchingSeason = 1;
 
   bool doneButton = false;
   bool isEdit = false;
@@ -46,6 +49,9 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
       isSeries = widget.data?.isSeries ?? false;
       seriesSeasons?.text = widget.data?.seriesSeasons.toString() ?? '0';
       seriesEpisodes?.text = widget.data?.seriesEpisodes.toString() ?? '0';
+      isWatchingSeries = widget.data?.isWatchingSeries ?? false;
+      watchingEpisode = widget.data?.watchingEpisode?.toDouble() ?? 1;
+      watchingSeason = widget.data?.watchingSeason?.toDouble() ?? 1;
     }
 
     if (isSeries) {
@@ -112,11 +118,12 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
                 const SizedBox(),
                 const Text("Is Watched?", style: TextStyle(fontSize: 20)),
                 Switch(
-                    value: isWatched,
-                    onChanged: (value) {
-                      isWatched = value;
-                      setState(() {});
-                    }),
+                  value: isWatched,
+                  onChanged: (value) {
+                    isWatched = value;
+                    setState(() {});
+                  },
+                ),
               ],
             ),
             isWatched
@@ -147,6 +154,40 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
                     child: Text("${date.day} ${date.month} ${date.year}"),
                   )
                 : const SizedBox(),
+            isWatched && isSeries && !error
+                ? Column(
+                    children: [
+                      Text("Season: ${watchingSeason.toInt()}"),
+                      Slider(
+                        min: 1,
+                        max: double.parse(seriesSeasons?.text ?? '10.0'),
+                        divisions: int.parse(seriesSeasons?.text ?? '10') + 1,
+                        value: watchingSeason,
+                        onChanged: (value) {
+                          watchingSeason = value;
+                          setState(() {});
+                        },
+                      ),
+                    ],
+                  )
+                : const SizedBox(),
+            isWatched && isSeries && !error
+                ? Column(
+                    children: [
+                      Text("Episode: ${watchingEpisode.toInt()}"),
+                      Slider(
+                        min: 1,
+                        max: double.parse(seriesEpisodes?.text ?? '10.0'),
+                        divisions: int.parse(seriesEpisodes?.text ?? '10') + 1,
+                        value: watchingEpisode,
+                        onChanged: (value) {
+                          watchingEpisode = value;
+                          setState(() {});
+                        },
+                      ),
+                    ],
+                  )
+                : const SizedBox(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -170,6 +211,7 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
                         width: 60,
                         child: TextField(
                           controller: seriesSeasons,
+                          onChanged: (value) => watchingSeason = 1,
                           keyboardType: TextInputType.number,
                         ),
                       ),
@@ -178,6 +220,7 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
                         width: 60,
                         child: TextField(
                           controller: seriesEpisodes,
+                          onChanged: (value) => watchingSeason = 1,
                           keyboardType: TextInputType.number,
                         ),
                       ),
@@ -194,18 +237,20 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
                   BlocProvider.of<MainPageBloc>(context).add(
                     MainPageEventAdd(
                       item: FilmItemType(
-                        rate: rate,
-                        title: title.text,
-                        comment: comment.text,
-                        watchedTime: date,
-                        isWatched: isWatched,
-                        createTime: widget.data?.createTime ?? DateTime.now(),
-                        isSeries: isSeries,
-                        seriesEpisodes:
-                            int.parse(seriesEpisodes?.text.toString() ?? "0"),
-                        seriesSeasons:
-                            int.parse(seriesSeasons?.text.toString() ?? '0'),
-                      ),
+                          rate: rate,
+                          title: title.text,
+                          comment: comment.text,
+                          watchedTime: date,
+                          isWatched: isWatched,
+                          createTime: widget.data?.createTime ?? DateTime.now(),
+                          isSeries: isSeries,
+                          seriesEpisodes:
+                              int.parse(seriesEpisodes?.text.toString() ?? "0"),
+                          seriesSeasons:
+                              int.parse(seriesSeasons?.text.toString() ?? '0'),
+                          isWatchingSeries: isWatchingSeries,
+                          watchingEpisode: watchingEpisode.toInt(),
+                          watchingSeason: watchingSeason.toInt()),
                     ),
                   );
                   AutoRouter.of(context).pop();
@@ -213,17 +258,19 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
                   BlocProvider.of<MainPageBloc>(context).add(
                     MainPageEventEdit(
                       item: FilmItemType(
-                        comment: comment.text,
-                        title: title.text,
-                        isWatched: isWatched,
-                        watchedTime: date,
-                        createTime: widget.data?.createTime ?? DateTime.now(),
-                        isSeries: isSeries,
-                        seriesEpisodes:
-                            int.parse(seriesEpisodes?.text.toString() ?? "0"),
-                        seriesSeasons:
-                            int.parse(seriesSeasons?.text.toString() ?? '0'),
-                      ),
+                          comment: comment.text,
+                          title: title.text,
+                          isWatched: isWatched,
+                          watchedTime: date,
+                          createTime: widget.data?.createTime ?? DateTime.now(),
+                          isSeries: isSeries,
+                          seriesEpisodes:
+                              int.parse(seriesEpisodes?.text.toString() ?? "0"),
+                          seriesSeasons:
+                              int.parse(seriesSeasons?.text.toString() ?? '0'),
+                          isWatchingSeries: isWatchingSeries,
+                          watchingEpisode: watchingEpisode.toInt(),
+                          watchingSeason: watchingSeason.toInt()),
                       index: widget.index ?? 0,
                     ),
                   );

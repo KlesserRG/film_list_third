@@ -80,6 +80,7 @@ class _MainPageSliverAnimatedListItemState
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Row(children: generateRate(widget.data.rate)),
+                            Text('E${widget.data.seriesEpisodes} / S${widget.data.seriesSeasons}'),
                             Text(
                                 "${widget.data.watchedTime?.day} ${widget.data.watchedTime?.month} ${widget.data.watchedTime?.year}"),
                           ],
