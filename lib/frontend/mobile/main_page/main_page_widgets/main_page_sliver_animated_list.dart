@@ -68,13 +68,23 @@ class _MainPageSliverAnimatedListItemState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.7,
+                  width: MediaQuery.of(context).size.width * 0.75,
                   child: Text(
                     widget.data.title,
                   ),
                 ),
                 widget.data.isWatched == true
-                    ? Row(children: generateRate(widget.data.rate))
+                    ? SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(children: generateRate(widget.data.rate)),
+                            Text(
+                                "${widget.data.watchedTime?.day} ${widget.data.watchedTime?.month} ${widget.data.watchedTime?.year}"),
+                          ],
+                        ),
+                    )
                     : const Text("Not watched before"),
               ],
             ),
