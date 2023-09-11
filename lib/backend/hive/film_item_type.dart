@@ -22,13 +22,26 @@ class FilmItemType {
   @HiveField(5)
   final String? comment;
 
-  const FilmItemType(
-      {this.isWatched = true,
-      this.title = "No title",
-      this.rate = 5,
-      this.createTime,
-      this.watchedTime,
-      this.comment});
+  @HiveField(6)
+  final bool isSeries;
+
+  @HiveField(7)
+  final int? seriesSeasons;
+
+  @HiveField(8)
+  final int? seriesEpisodes;
+
+  const FilmItemType({
+    this.isWatched = true,
+    this.title = "No title",
+    this.rate = 5,
+    this.createTime,
+    this.watchedTime,
+    this.comment,
+    this.isSeries = false,
+    this.seriesEpisodes,
+    this.seriesSeasons,
+  });
 }
 
 @HiveType(typeId: 1)

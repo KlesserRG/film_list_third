@@ -23,13 +23,16 @@ class FilmItemTypeAdapter extends TypeAdapter<FilmItemType> {
       createTime: fields[3] as DateTime?,
       watchedTime: fields[4] as DateTime?,
       comment: fields[5] as String?,
+      isSeries: fields[6] as bool,
+      seriesEpisodes: fields[8] as int?,
+      seriesSeasons: fields[7] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, FilmItemType obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.isWatched)
       ..writeByte(1)
@@ -41,7 +44,13 @@ class FilmItemTypeAdapter extends TypeAdapter<FilmItemType> {
       ..writeByte(4)
       ..write(obj.watchedTime)
       ..writeByte(5)
-      ..write(obj.comment);
+      ..write(obj.comment)
+      ..writeByte(6)
+      ..write(obj.isSeries)
+      ..writeByte(7)
+      ..write(obj.seriesSeasons)
+      ..writeByte(8)
+      ..write(obj.seriesEpisodes);
   }
 
   @override

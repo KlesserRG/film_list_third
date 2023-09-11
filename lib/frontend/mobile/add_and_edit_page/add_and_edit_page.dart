@@ -22,10 +22,14 @@ class AddAndEditPage extends StatefulWidget {
 
 class _AddAndEditPageState extends State<AddAndEditPage> {
   bool isWatched = false;
+  bool isSeries = false;
+  bool error = false;
   int rate = 1;
   DateTime date = DateTime.now();
   TextEditingController title = TextEditingController();
   TextEditingController comment = TextEditingController();
+  TextEditingController? seriesSeasons = TextEditingController();
+  TextEditingController? seriesEpisodes = TextEditingController();
 
   bool doneButton = false;
   bool isEdit = false;
@@ -39,9 +43,22 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
       date = widget.data?.watchedTime ?? DateTime.now();
       title.text = widget.data?.title ?? 'No title';
       comment.text = widget.data?.comment ?? 'No comment';
+      isSeries = widget.data?.isSeries ?? false;
+      seriesSeasons?.text = widget.data?.seriesSeasons.toString() ?? '0';
+      seriesEpisodes?.text = widget.data?.seriesEpisodes.toString() ?? '0';
     }
 
-    if (title.text.isEmpty) {
+    if (isSeries) {
+      try {
+        int.parse(seriesSeasons!.text);
+        int.parse(seriesEpisodes!.text);
+        error = false;
+      } catch (e) {
+        error = true;
+      }
+    }
+
+    if (title.text.isEmpty && error == false) {
       doneButton = false;
     } else {
       doneButton = true;
@@ -90,8 +107,9 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
             ),
             const SizedBox(height: 8),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                const SizedBox(),
                 const Text("Is Watched?", style: TextStyle(fontSize: 20)),
                 Switch(
                     value: isWatched,
@@ -106,7 +124,7 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: createRate(),
                   )
-                : const SizedBox(height: 55),
+                : const SizedBox(),
             isWatched
                 ? OutlinedButton(
                     style: ButtonStyle(
@@ -128,14 +146,51 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
                     },
                     child: Text("${date.day} ${date.month} ${date.year}"),
                   )
-                : const SizedBox(height: 40),
+                : const SizedBox(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(),
+                const Text('Is Series?', style: TextStyle(fontSize: 20)),
+                Switch(
+                  value: isSeries,
+                  onChanged: (value) {
+                    isSeries = value;
+                    setState(() {});
+                  },
+                )
+              ],
+            ),
+            isSeries
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      const Text('Seasons: ', style: TextStyle(fontSize: 20)),
+                      SizedBox(
+                        width: 60,
+                        child: TextField(
+                          controller: seriesSeasons,
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
+                      const Text('Episodes: ', style: TextStyle(fontSize: 20)),
+                      SizedBox(
+                        width: 60,
+                        child: TextField(
+                          controller: seriesEpisodes,
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
+                    ],
+                  )
+                : const SizedBox(),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: doneButton
             ? () {
-                if (widget.isAdd == true) {
+                if (widget.isAdd == true && error == false) {
                   BlocProvider.of<MainPageBloc>(context).add(
                     MainPageEventAdd(
                       item: FilmItemType(
@@ -145,11 +200,16 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
                         watchedTime: date,
                         isWatched: isWatched,
                         createTime: widget.data?.createTime ?? DateTime.now(),
+                        isSeries: isSeries,
+                        seriesEpisodes:
+                            int.parse(seriesEpisodes?.text.toString() ?? "0"),
+                        seriesSeasons:
+                            int.parse(seriesSeasons?.text.toString() ?? '0'),
                       ),
                     ),
                   );
                   AutoRouter.of(context).pop();
-                } else {
+                } else if (error == false) {
                   BlocProvider.of<MainPageBloc>(context).add(
                     MainPageEventEdit(
                       item: FilmItemType(
@@ -158,11 +218,18 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
                         isWatched: isWatched,
                         watchedTime: date,
                         createTime: widget.data?.createTime ?? DateTime.now(),
+                        isSeries: isSeries,
+                        seriesEpisodes:
+                            int.parse(seriesEpisodes?.text.toString() ?? "0"),
+                        seriesSeasons:
+                            int.parse(seriesSeasons?.text.toString() ?? '0'),
                       ),
                       index: widget.index ?? 0,
                     ),
                   );
                   AutoRouter.of(context).pop();
+                } else {
+                  null;
                 }
               }
             : null,

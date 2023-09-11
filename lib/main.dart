@@ -1,4 +1,5 @@
 import 'package:film_list_third/backend/hive/film_item_type.dart';
+import 'package:film_list_third/backend/hive/film_item_type_boxes.dart';
 import 'package:film_list_third/backend/hive/film_item_type_keys.dart';
 import 'package:film_list_third/frontend/app.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,10 @@ void main() async{
 
   await Hive.openBox<FilmItemType>(FilmItemTypeKeys.filmItemTypeKey);
   await Hive.openBox<UserThemeDataType>(FilmItemTypeKeys.userThemeDataTypeKey);
+
+  HiveBoxes.filmItemType.clear();
+
+  // runApp(const MaterialApp());
 
   runApp(const FilmListAppStart());
 
