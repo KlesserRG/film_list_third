@@ -16,18 +16,13 @@ class MainPageSliverAnimatedList extends StatelessWidget {
     return SliverList.builder(
       itemBuilder: (context, index) {
         return list.isEmpty
-            ? SliverAnimatedList(
-                itemBuilder: (context, index, animation) => const ListTile(
-                  title: Center(child: Text("No data")),
-                ),
-                initialItemCount: 1,
-              )
+            ? const Center(child: Text("No data"))
             : MainPageSliverAnimatedListItem(
                 index: list.length - 1 - index,
                 data: list[list.length - 1 - index],
               );
       },
-      itemCount: list.length - 1,
+      itemCount: list.length,
     );
   }
 }
@@ -72,7 +67,12 @@ class _MainPageSliverAnimatedListItemState
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.data.title),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  child: Text(
+                    widget.data.title,
+                  ),
+                ),
                 widget.data.isWatched == true
                     ? Row(children: generateRate(widget.data.rate))
                     : const Text("Not watched before"),

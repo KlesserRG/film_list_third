@@ -14,5 +14,6 @@ void main() async{
   await Hive.openBox<UserThemeDataType>(FilmItemTypeKeys.userThemeDataTypeKey);
 
   runApp(const FilmListAppStart());
+
 }
 

@@ -32,7 +32,7 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.isAdd == false && isEdit == false) {
+    if (widget.isAdd == isEdit) {
       isEdit = true;
       isWatched = widget.data?.isWatched ?? true;
       rate = widget.data?.rate ?? 3;
@@ -68,7 +68,7 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.data != null ? "Add new" : "Edit current"),
+        title: Text(widget.data == null ? "Add new" : "Edit current"),
         centerTitle: true,
       ),
       body: Padding(
@@ -78,6 +78,7 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
           children: [
             TextField(
               controller: title,
+              autofocus: widget.isAdd,
               decoration: const InputDecoration(label: Text("Title")),
               onChanged: (value) => setState(() {}),
             ),

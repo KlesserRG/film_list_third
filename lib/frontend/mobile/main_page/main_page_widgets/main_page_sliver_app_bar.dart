@@ -14,7 +14,7 @@ class _MainPageSliverAppBarState extends State<MainPageSliverAppBar> {
   @override
   Widget build(BuildContext context) {
     return const SliverAppBar(
-      title: Text("Film List"),
+      title: Text("Your Wish List"),
       centerTitle: true,
       floating: false,
       // actions: <Widget>[
