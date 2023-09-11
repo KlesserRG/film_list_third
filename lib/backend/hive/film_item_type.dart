@@ -2,6 +2,11 @@ import 'package:hive/hive.dart';
 
 part 'film_item_type.g.dart';
 
+/*
+  Основной файл базы данных. 
+  Отвечает за хранение фильмов и сериалов.
+*/
+
 @HiveType(typeId: 0)
 class FilmItemType {
   @HiveField(0)
@@ -55,6 +60,10 @@ class FilmItemType {
     this.watchingSeason,
   });
 }
+
+/*
+  Файл хранения темы.
+*/
 
 @HiveType(typeId: 1)
 class UserThemeDataType {

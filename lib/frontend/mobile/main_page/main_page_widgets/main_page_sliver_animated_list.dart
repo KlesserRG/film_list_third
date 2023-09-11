@@ -4,6 +4,17 @@ import 'package:film_list_third/frontend/mobile/main_page/main_page_widgets/main
 import 'package:film_list_third/frontend/mobile/router/router.dart';
 import 'package:flutter/material.dart';
 
+/*
+  Главный класс отображения.
+  Именно сюда передается файл list со всей базой данных для её отображения.
+  Файл передается именно сюда поскольку установить генератор блокав сливер не выходит.
+  -
+  Так же нам нужно было сделать отображение от последнего элемена к самому первому.
+  В SliverList.builder такой функции не предусмотрено, поэтому тут стоит такая конструкция:
+  list.length - 1 - index
+  Она переворачивает всю базу по дате добавления задом наперед в отображении.
+*/
+
 class MainPageSliverAnimatedList extends StatelessWidget {
   final List<FilmItemType> list;
   const MainPageSliverAnimatedList({
@@ -27,6 +38,15 @@ class MainPageSliverAnimatedList extends StatelessWidget {
   }
 }
 
+/*
+  Класс отображения. Также именно этот класс один из самых нагруженных в приложении.
+  У класса есть несколько состояний. Свойства следующего наследуются из предыдущих.
+  1. Не просмотренные приложения отображаются как имя, сообщение о непросмотренности и настройки.
+  2. Просмотренные приложения отображаются с рейтингом и датой просмотра. 
+  3. Просмотренные приложения опционально отображаются с комментарием пользователя
+  4. Просмотренные сериалы отображаются с индикатором серий. 
+*/
+
 class MainPageSliverAnimatedListItem extends StatefulWidget {
   final bool isDeletingMode;
   final int index;
@@ -48,6 +68,8 @@ class _MainPageSliverAnimatedListItemState
   MenuController controller = MenuController();
   @override
   Widget build(BuildContext context) {
+    // Генератор звездочек рейтинга
+
     List<Icon> generateRate(int rate) {
       List<Icon> list = [];
       for (int i = 1; i <= 5; i++) {
@@ -59,6 +81,8 @@ class _MainPageSliverAnimatedListItemState
       }
       return list;
     }
+
+    // Основной класс
 
     return Card(
       child: ListTile(
@@ -73,27 +97,41 @@ class _MainPageSliverAnimatedListItemState
                     widget.data.title,
                   ),
                 ),
+                // Проверка, был ли просмотрен фильм или сериал
                 widget.data.isWatched == true
                     ? SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.75,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        width: MediaQuery.of(context).size.width * 0.75,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            // Рейтинг
                             Row(children: generateRate(widget.data.rate)),
-                            Text('E${widget.data.seriesEpisodes} / S${widget.data.seriesSeasons}'),
+                            // Эпизоды и сезоны для сериалов
+                            widget.data.seriesEpisodes == 1
+                                ? Text(
+                                    'E${widget.data.seriesEpisodes} / S${widget.data.seriesSeasons}')
+                                : const SizedBox(),
+                            // Дата, когда фильм был просмотренным.
                             Text(
                                 "${widget.data.watchedTime?.day} ${widget.data.watchedTime?.month} ${widget.data.watchedTime?.year}"),
                           ],
                         ),
-                    )
+                      )
+                      // Выводится если не просмотрен
                     : const Text("Not watched before"),
               ],
             ),
             const Spacer(),
+
+            // Меню настроек в правой части класса
+
             MenuAnchor(
               controller: controller,
               anchorTapClosesMenu: true,
               menuChildren: [
+
+                // Изменение информации класса
+
                 IconButton(
                   onPressed: () {
                     controller.close();
@@ -109,6 +147,9 @@ class _MainPageSliverAnimatedListItemState
                     color: Theme.of(context).primaryColorLight,
                   ),
                 ),
+
+                // Удаление класса из базы данных
+
                 IconButton(
                   onPressed: () {
                     controller.close();
@@ -125,6 +166,7 @@ class _MainPageSliverAnimatedListItemState
                   ),
                 ),
               ],
+              // Открытие и закрытие меню настроек
               child: IconButton(
                 onPressed: () {
                   if (controller.isOpen) {
@@ -138,6 +180,7 @@ class _MainPageSliverAnimatedListItemState
             ),
           ],
         ),
+        // Отображение комментария пользователя
         subtitle: widget.data.comment?.isEmpty ?? true
             ? null
             : Column(

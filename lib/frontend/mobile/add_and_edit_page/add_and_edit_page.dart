@@ -20,25 +20,49 @@ class AddAndEditPage extends StatefulWidget {
   State<AddAndEditPage> createState() => _AddAndEditPageState();
 }
 
+/*
+  Меню редактирования добавления нового в базу данных.
+*/
+
 class _AddAndEditPageState extends State<AddAndEditPage> {
+  // Переключатель просмотра
   bool isWatched = false;
-  bool isSeries = false;
+  // Переключатель ошибки
   bool error = false;
+  // Рейтинг звезд
   int rate = 1;
+  // Время просмотра если isWatched = true
   DateTime date = DateTime.now();
+
+  // Название файла
   TextEditingController title = TextEditingController();
+  // Комментарий файла
   TextEditingController comment = TextEditingController();
+
+  // Переключатель сериала и фильма
+  bool isSeries = false;
+  // Контроллер сезонов для сериалов.
   TextEditingController? seriesSeasons = TextEditingController();
+  // Контроллер эпизодов для сериалов
   TextEditingController? seriesEpisodes = TextEditingController();
+
+  // Определяет был ли просмотрен сериал. isSeries и isWatched должны быть true
   bool isWatchingSeries = false;
+  // Номер просмотренного эпизода
   double watchingEpisode = 1;
+  // Номер просмотренного сезона
   double watchingSeason = 1;
 
+  // Доступность кнопки добавления. Если false - недоступна.
   bool doneButton = false;
+  // Добавляет все данные во все поля из базы данных, а после становится true
   bool isEdit = false;
 
   @override
   Widget build(BuildContext context) {
+    // Проверка, добавление ли это или редакрирование.
+    // Если редактирование - берет данные из базы данных.
+
     if (widget.isAdd == isEdit) {
       isEdit = true;
       isWatched = widget.data?.isWatched ?? true;
@@ -54,6 +78,9 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
       watchingSeason = widget.data?.watchingSeason?.toDouble() ?? 1;
     }
 
+    // Определяет, пришли ли цифры в ввод серий и сезонов сериала.
+    // Если нет - провоцирует ошибку
+
     if (isSeries) {
       try {
         int.parse(seriesSeasons!.text);
@@ -64,11 +91,15 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
       }
     }
 
+    // Определяет доступность кнопки добавления
+
     if (title.text.isEmpty && error == false) {
       doneButton = false;
     } else {
       doneButton = true;
     }
+
+    // Создание рейтинга звезд.
 
     List<IconButton> createRate() {
       List<IconButton> list = [];
@@ -89,7 +120,10 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
       return list;
     }
 
+    // Основной виджет
+
     return Scaffold(
+      // Меняет текст в зависимости от пришедших данных
       appBar: AppBar(
         title: Text(widget.data == null ? "Add new" : "Edit current"),
         centerTitle: true,
@@ -99,6 +133,7 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Название 
             TextField(
               controller: title,
               autofocus: widget.isAdd,
@@ -106,12 +141,14 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
               onChanged: (value) => setState(() {}),
             ),
             const SizedBox(height: 8),
+            // Комментарий
             TextField(
               controller: comment,
               decoration: const InputDecoration(label: Text("Your Opinion")),
               onChanged: (value) => setState(() {}),
             ),
             const SizedBox(height: 8),
+            // Кнопка, переключающая isWatched
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -126,12 +163,14 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
                 ),
               ],
             ),
+            // Создание рейтинга, если isWatched = true
             isWatched
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: createRate(),
                   )
                 : const SizedBox(),
+            // Создание выбора даты, если isWatched = true
             isWatched
                 ? OutlinedButton(
                     style: ButtonStyle(
@@ -151,9 +190,19 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
                           DateTime.now();
                       setState(() {});
                     },
+                    // Нативное отображение даты
                     child: Text("${date.day} ${date.month} ${date.year}"),
                   )
                 : const SizedBox(),
+            /*
+              Если пришли корректные данные в количество серий и сезонов (error)
+              Если это сериал (isSeries)
+              Если он просмотрен (isWatched)
+
+              Появляются 2 слайдера, определяющие сколько эпизодов и сезонов вы просмотели.
+              
+              Ниже слайдер сезонов
+            */
             isWatched && isSeries && !error
                 ? Column(
                     children: [
@@ -171,6 +220,7 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
                     ],
                   )
                 : const SizedBox(),
+            // Второй слайдер, но для эпизодов
             isWatched && isSeries && !error
                 ? Column(
                     children: [
@@ -188,6 +238,7 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
                     ],
                   )
                 : const SizedBox(),
+            // Определение, является ли это сериалом
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -202,6 +253,12 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
                 )
               ],
             ),
+            /*
+              Если является сериалом - нужно ввести количество серий и сезонов.
+              Ввод не цифр должен провоцировать ошибку ввода.
+              Также установлены данные watchingSeason и watchingEpisode на 1, при изменении
+              Провоцирует ошибку приложения если данные из watching больше чем данные из series
+            */
             isSeries
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -220,7 +277,7 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
                         width: 60,
                         child: TextField(
                           controller: seriesEpisodes,
-                          onChanged: (value) => watchingSeason = 1,
+                          onChanged: (value) => watchingEpisode = 1,
                           keyboardType: TextInputType.number,
                         ),
                       ),
@@ -230,9 +287,14 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
           ],
         ),
       ),
+      /*
+        Кнопка добавления и изменения.
+        Наличие проверки обусловлено наличием двух разных ивентов в блоке.
+      */
       floatingActionButton: FloatingActionButton(
         onPressed: doneButton
             ? () {
+              // Кнопка добавления новой информации в базу данных
                 if (widget.isAdd == true && error == false) {
                   BlocProvider.of<MainPageBloc>(context).add(
                     MainPageEventAdd(
@@ -254,6 +316,7 @@ class _AddAndEditPageState extends State<AddAndEditPage> {
                     ),
                   );
                   AutoRouter.of(context).pop();
+                  // Кнопка редактирования уже существующей информации в базе данных
                 } else if (error == false) {
                   BlocProvider.of<MainPageBloc>(context).add(
                     MainPageEventEdit(

@@ -7,6 +7,10 @@ class MainPageDelete extends StatelessWidget {
   final int index;
   const MainPageDelete({super.key, required this.index});
 
+  /*
+    Выскакивающий диалог об удалении выбранного элемента
+  */
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

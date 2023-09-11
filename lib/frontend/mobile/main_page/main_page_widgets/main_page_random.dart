@@ -12,6 +12,10 @@ class MainPageRandom extends StatefulWidget {
   State<MainPageRandom> createState() => _MainPageRandomState();
 }
 
+/*
+  Небольшой выскакивающий баннер для рандомизации.
+*/
+
 class _MainPageRandomState extends State<MainPageRandom> {
   @override
   Widget build(BuildContext context) {

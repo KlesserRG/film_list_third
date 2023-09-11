@@ -15,6 +15,10 @@ class MainPageBottomAppBar extends StatefulWidget {
   State<MainPageBottomAppBar> createState() => _MainPageBottomAppBarState();
 }
 
+/*
+  Все нижнее меню приложения. Из-за обилия функционала оно так раздулось.
+*/
+
 class _MainPageBottomAppBarState extends State<MainPageBottomAppBar> {
   final SearchController searchController = SearchController();
   final MenuController rateController = MenuController();
@@ -26,12 +30,17 @@ class _MainPageBottomAppBarState extends State<MainPageBottomAppBar> {
     return BottomAppBar(
       child: Row(
         children: <Widget>[
-          // SETTINGS
+          /*
+            Настройки приложения.
+            На текущий момент можно выбрать тему и рандомный фильм
+          */
 
           MenuAnchor(
             controller: settingsController,
             anchorTapClosesMenu: false,
             menuChildren: <Widget>[
+              // Рандом
+
               SizedBox(
                 width: 150,
                 child: TextButton.icon(
@@ -48,6 +57,9 @@ class _MainPageBottomAppBarState extends State<MainPageBottomAppBar> {
                   label: const Text("Random"),
                 ),
               ),
+
+              // Выбор темы
+
               SizedBox(
                 width: 150,
                 child: TextButton.icon(
@@ -60,6 +72,8 @@ class _MainPageBottomAppBarState extends State<MainPageBottomAppBar> {
                 ),
               ),
             ],
+            // Иконка настройки
+
             child: IconButton(
               onPressed: () {
                 if (settingsController.isOpen) {
@@ -75,7 +89,7 @@ class _MainPageBottomAppBarState extends State<MainPageBottomAppBar> {
             ),
           ),
 
-          // RATE
+          // Сортировка по звездам
 
           MenuAnchor(
             controller: rateController,
@@ -116,13 +130,13 @@ class _MainPageBottomAppBarState extends State<MainPageBottomAppBar> {
             ),
           ),
 
-          // SEARCH
+          // Поисковик. Вынесен в файл main_page_search.datt
 
           const MainPageSearch(),
 
           const Spacer(),
 
-          // ADD BUTTON
+          // Добавление нового файла в базу
 
           FloatingActionButton(
             onPressed: () {

@@ -11,9 +11,13 @@ class MainPageSearch extends StatefulWidget {
   State<MainPageSearch> createState() => _MainPageSearchState();
 }
 
+/*
+  Поисковик. Был вынесен в отдельный файл из-за своего размера и тем, 
+  что визуально это новая страница.
+*/
+
 class _MainPageSearchState extends State<MainPageSearch> {
   final SearchController searchController = SearchController();
-  SearchController searchControllerPast = SearchController();
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MainPageBloc, MainPageState>(
@@ -21,9 +25,11 @@ class _MainPageSearchState extends State<MainPageSearch> {
         if (state is! MainPageLoaded) {
           return const Center(child: CircularProgressIndicator());
         }
+        // Сама иконка указывается именно здесь, хотя отображается на прошлой странице.
         return SearchAnchor(
           searchController: searchController,
           builder: (context, searchController) {
+            // Отображение иконки
             return IconButton(
               onPressed: () {
                 searchController.openView();
@@ -34,8 +40,14 @@ class _MainPageSearchState extends State<MainPageSearch> {
               ),
             );
           },
+
+          // Отображение всех подподающих под поисковик файлов
+
           suggestionsBuilder: (context, searchController) {
             return List.generate(state.data.length, (index) {
+
+              // Отображает всю базу данных, если в поисковике пусто
+
               if (searchController.text.isEmpty) {
                 return ListTile(
                   title: Text(state.data[index].title),
@@ -50,10 +62,14 @@ class _MainPageSearchState extends State<MainPageSearch> {
                 );
               }
 
+              // Проверяет, чтобы данные из базы не были длинее введенного слова
+
               if (state.data[index].title.length <
                   searchController.text.length) {
                 return const SizedBox();
               }
+
+              // Проверка букв на совпадение.
 
               for (var i = 0; i < searchController.text.length; i++) {
                 if (state.data[index].title.toLowerCase().split('')[i] !=
@@ -61,6 +77,9 @@ class _MainPageSearchState extends State<MainPageSearch> {
                   return const SizedBox();
                 }
               }
+
+              // Возвращение всех прошежших проверки данных
+
               return ListTile(
                 title: Text(state.data[index].title),
                 onTap: () {
